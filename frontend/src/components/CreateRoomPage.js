@@ -9,8 +9,10 @@ import { Link } from "react-router-dom";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateRoomPage() {
+  const navigate = useNavigate();
   const defaultVotes = 2;
 
   const [guestCanPause, setGuestCanPause] = useState(true);
@@ -39,6 +41,7 @@ export default function CreateRoomPage() {
     });
     const data = await response.json();
     console.log(data);
+    navigate(`/room/${data.code}`);
   };
   return (
     <Grid container spacing={1}>
