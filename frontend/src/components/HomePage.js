@@ -11,10 +11,11 @@ import {
 } from "react-router-dom";
 
 export default function HomePage() {
+  const homePageContent = () => {};
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<h1>This is the home page.</h1>} />
+        <Route path="/" element={homePageContent} />
         <Route path="/join" element={<RoomJoinPage />} />
         <Route path="/create" element={<CreateRoomPage />} />
         <Route path="/room/:roomCode" element={<Room />} />

@@ -102,9 +102,11 @@ export default function CreateRoomPage() {
         </Button>
       </Grid>
       <Grid item xs={12} align="center">
-        <Button color="secondary" variant="contained" to="/" component={Link}>
-          Back
-        </Button>
+        <Link to="/">
+          <Button color="secondary" variant="contained">
+            Back
+          </Button>
+        </Link>
       </Grid>
     </Grid>
   );
