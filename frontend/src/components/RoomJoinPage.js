@@ -1,11 +1,12 @@
 import React from "react";
 import { TextField, Button, Grid, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function RoomJoinPage() {
   const [roomCode, setRoomCode] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleTextFieldChange = (e) => {
     setRoomCode(e.target.value);
@@ -24,15 +25,13 @@ export default function RoomJoinPage() {
       });
 
       if (response.ok) {
-        window.location.href = `/room/${roomCode}`;
+        navigate(`/room/${roomCode}`);
       } else {
         setError("Room not found.");
       }
     } catch (error) {
       console.log(error);
     }
-    const data = await response.json();
-    console.log(data);
   };
 
   return (
