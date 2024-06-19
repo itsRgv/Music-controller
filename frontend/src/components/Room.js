@@ -10,12 +10,12 @@ const Room = ({ clearRoomCode }) => {
   const [guestCanPause, setGuestCanPause] = useState(true);
   const [isHost, setIsHost] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     // console.log(params.roomCode);
-
     getRoomDetails();
   }, []);
 
@@ -26,10 +26,28 @@ const Room = ({ clearRoomCode }) => {
       navigate("/");
     }
     const result = await response.json();
-    console.log(result);
+    // console.log(result);
     setVotesToSkip(result.votes_to_skip);
     setGuestCanPause(result.guest_can_pause);
     setIsHost(result.is_host);
+    if (result.is_host) {
+      // console.log("hi");
+      authenticateSpotify();
+    }
+  };
+
+  const authenticateSpotify = async () => {
+    // console.log("hi");
+    const response = await fetch("/spotify/is-authenticated");
+    const data = await response.json();
+
+    setSpotifyAuthenticated(data.status);
+    console.log(data.status);
+    if (!data.status) {
+      const response = await fetch("/spotify/get-auth-url");
+      const data = await response.json();
+      window.location.replace(data.url);
+    }
   };
 
   const handleLeaveRoom = async () => {
@@ -114,7 +132,11 @@ const Room = ({ clearRoomCode }) => {
       </Grid>
       {isHost ? renderSettingsButton() : null}
       <Grid item xs={12} align="center">
-        <Button variant="contained" color="error" onClick={handleLeaveRoom}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => handleLeaveRoom()}
+        >
           Leave Room
         </Button>
       </Grid>

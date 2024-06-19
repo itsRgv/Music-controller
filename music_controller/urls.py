@@ -20,5 +20,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')), # this is the main url for the api
-    path('', include('frontend.urls')) # this is the main url for the frontend
+    path('', include('frontend.urls')), # this is the main url for the frontend
+    path('spotify/', include('spotify.urls'))
 ]

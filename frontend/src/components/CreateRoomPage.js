@@ -15,19 +15,19 @@ import { Collapse } from "@mui/material";
 import Alert from "@mui/material/Alert";
 
 export default function CreateRoomPage({
-  update,
-  votes_to_skip,
-  guest_can_pause,
-  room_code,
-  updateCallback,
+  update = false,
+  votes_to_skip = 2,
+  guest_can_pause = true,
+  room_code = null,
+  updateCallback = () => {},
 }) {
-  CreateRoomPage.defaultProps = {
-    votes_to_skip: 2,
-    guest_can_pause: true,
-    update: false,
-    room_code: null,
-    updateCallback: () => {},
-  };
+  // CreateRoomPage.defaultProps = {
+  //   votes_to_skip: 2,
+  //   guest_can_pause: true,
+  //   update: false,
+  //   room_code: null,
+  //   updateCallback: () => {},
+  // };
 
   const navigate = useNavigate();
 
@@ -46,7 +46,7 @@ export default function CreateRoomPage({
   };
 
   const handleRoomButtonPressed = async () => {
-    console.log("hi");
+    // console.log("hi");
     const response = await fetch("/api/create-room", {
       method: "POST",
       headers: {
@@ -58,12 +58,12 @@ export default function CreateRoomPage({
       }),
     });
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     navigate(`/room/${data.code}`);
   };
 
   const handleUpdateButtonPressed = async () => {
-    console.log({ votesToSkip, guestCanPause });
+    // console.log({ votesToSkip, guestCanPause });
     const response = await fetch("/api/update-room", {
       method: "PATCH",
       headers: {
@@ -119,7 +119,7 @@ export default function CreateRoomPage({
       </Grid>
     );
   };
-
+  // console.log(guestCanPause);
   const title = update ? "Update Room" : "Create A Room";
   return (
     <Grid container spacing={1}>
