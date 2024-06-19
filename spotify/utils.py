@@ -3,6 +3,9 @@ from django.utils import timezone
 from datetime import timedelta
 from .credentials import CLIENT_ID, CLIENT_SECRET
 from requests import post, put, get
+import base64
+
+BASE_URL = "https://api.spotify.com/v1/me/"
 
 def getSpotifyTokens(session_key):
     tokens = SpotifyToken.objects.filter(user = session_key)
@@ -29,27 +32,52 @@ def is_spotify_authenticated(session_key):
     token = getSpotifyTokens(session_key)
 
     if token:
-        if token.expires_in <= timezone.now():
+        expiry = token.expires_in
+        if expiry <= timezone.now():
             refresh_spotify_token(session_key)
-
         return True
     return False
     
 
 def refresh_spotify_token(session_key):
     refresh_token = getSpotifyTokens(session_key).refresh_token
+    url = "https://accounts.spotify.com/api/token"
 
-    response = post('https://accounts.spotify.com/api/token', data={
+    data = {
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET
-    }).json()
-    
-    access_token = response.get('access_token')
-    token_type = response.get('token_type')
-    expires_in = response.get('expires_in')
-    refresh_token = response.get('refresh_token')
+    }
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
 
-    update_or_create_user_tokens(
-        session_key, access_token, token_type, expires_in, refresh_token)
+
+    response = post(url, data=data, headers=headers)
+    token_response = response.json()
+    access_token = token_response.get('access_token')
+    refresh_token = token_response.get('refresh_token')
+    token_type = token_response.get('token_type')
+    expires_in = token_response.get('expires_in')
+    print(refresh_token)
+    update_or_create_user_tokens(session_key, access_token, refresh_token, token_type, expires_in)
+
+
+def execute_spotify_api_request(session_key, endpoint, post_ = False, put_ = False):
+    tokens = getSpotifyTokens(session_key)
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + tokens.access_token
+    }
+    if post_:
+        post(BASE_URL + endpoint, headers=headers)
+    if put_:
+        put(BASE_URL + endpoint, headers=headers)
+    
+    response = get(BASE_URL + endpoint, {}, headers=headers) 
+    print(response)
+    try:
+        return response.json()
+    except:
+        return {'Error': 'Issue with request'}
