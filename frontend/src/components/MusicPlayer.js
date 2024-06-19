@@ -13,6 +13,37 @@ import SkipNextIcon from "@mui/icons-material/SkipNext";
 const MusicPlayer = (props) => {
   const songProgress = (props.time / props.duration) * 100;
 
+  const pauseSong = async () => {
+    const response = await fetch("/spotify/pause-song", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response);
+  };
+
+  const playSong = async () => {
+    const response = await fetch("/spotify/play-song", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response);
+  };
+
+  const skipSong = async () => {
+    const response = await fetch("/spotify/skip-song", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // console.log(response);
+    console.log(props.votes);
+  };
+
   return (
     <Card>
       <Grid container alignItems="center">
@@ -27,10 +58,15 @@ const MusicPlayer = (props) => {
             {props.artist}
           </Typography>
           <div>
-            <IconButton>
+            <IconButton
+              onClick={() => {
+                props.is_playing ? pauseSong() : playSong();
+              }}
+            >
               {props.is_playing ? <PauseIcon /> : <PlayArrowIcon />}
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => skipSong()}>
+              {props.votes}/ {props.votes_required}
               <SkipNextIcon />
             </IconButton>
           </div>
